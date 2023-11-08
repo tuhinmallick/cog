@@ -71,12 +71,11 @@ def webhook_caller(webhook: str) -> Callable:
 
 def requests_session() -> requests.Session:
     session = requests.Session()
-    session.headers["user-agent"] = (
-        _user_agent + " " + str(session.headers["user-agent"])
+    session.headers["user-agent"] = f"{_user_agent} " + str(
+        session.headers["user-agent"]
     )
-    auth_token = os.environ.get("WEBHOOK_AUTH_TOKEN")
-    if auth_token:
-        session.headers["authorization"] = "Bearer " + auth_token
+    if auth_token := os.environ.get("WEBHOOK_AUTH_TOKEN"):
+        session.headers["authorization"] = f"Bearer {auth_token}"
 
     return session
 

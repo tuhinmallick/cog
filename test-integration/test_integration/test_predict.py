@@ -115,7 +115,7 @@ def test_predict_writes_strings_to_files(tmpdir_factory):
 
 def test_predict_runs_an_existing_image(tmpdir_factory):
     project_dir = Path(__file__).parent / "fixtures/string-project"
-    image_name = "cog-test-" + random_string(10)
+    image_name = f"cog-test-{random_string(10)}"
 
     try:
         subprocess.run(

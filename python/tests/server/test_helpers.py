@@ -57,14 +57,12 @@ def test_wrapped_stream_can_write_to_original(tmpfile):
     to the original stream destination (before it was wrapped).
     """
     filename = tmpfile()
-    fake_stream = open(filename, "w")
-    ws = WrappedStream("fake", fake_stream)
-    ws.wrap()
+    with open(filename, "w") as fake_stream:
+        ws = WrappedStream("fake", fake_stream)
+        ws.wrap()
 
-    ws.original.write("test data\n")
-    ws.original.flush()
-    fake_stream.close()
-
+        ws.original.write("test data\n")
+        ws.original.flush()
     output = open(filename).read()
 
     assert output == "test data\n"
@@ -76,14 +74,12 @@ def test_wrapped_stream_writes_are_intercepted(tmpfile):
     the stream.
     """
     filename = tmpfile()
-    fake_stream = open(filename, "w")
-    ws = WrappedStream("fake", fake_stream)
-    ws.wrap()
+    with open(filename, "w") as fake_stream:
+        ws = WrappedStream("fake", fake_stream)
+        ws.wrap()
 
-    fake_stream.write("test data\n")
-    fake_stream.flush()
-    fake_stream.close()
-
+        fake_stream.write("test data\n")
+        fake_stream.flush()
     output = open(filename).read()
 
     assert output == ""

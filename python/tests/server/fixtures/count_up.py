@@ -3,5 +3,4 @@ class Predictor:
         pass
 
     def predict(self, upto):
-        for i in range(upto):
-            yield i
+        yield from range(upto)

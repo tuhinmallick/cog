@@ -10,4 +10,4 @@ class Predictor(BasePredictor):
         num2: int = Input(default=10),
     ) -> str:
         with open(path) as fh:
-            return text + " " + str(num1 * num2) + " " + fh.read()
+            return f"{text} {str(num1 * num2)} {fh.read()}"

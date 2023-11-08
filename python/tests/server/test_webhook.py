@@ -34,16 +34,14 @@ def test_webhook_caller_non_terminal_does_not_retry():
 @responses.activate(registry=registries.OrderedRegistry)
 def test_webhook_caller_terminal_retries():
     c = webhook_caller("https://example.com/webhook/123")
-    resps = []
-
-    for _ in range(2):
-        resps.append(
-            responses.post(
-                "https://example.com/webhook/123",
-                json={"status": "succeeded", "animal": "giraffe"},
-                status=429,
-            )
+    resps = [
+        responses.post(
+            "https://example.com/webhook/123",
+            json={"status": "succeeded", "animal": "giraffe"},
+            status=429,
         )
+        for _ in range(2)
+    ]
     resps.append(
         responses.post(
             "https://example.com/webhook/123",

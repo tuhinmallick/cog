@@ -179,9 +179,7 @@ def load_predictor_from_ref(ref: str) -> BasePredictor:
 
     predictor = getattr(module, class_name)
     # It could be a class or a function
-    if inspect.isclass(predictor):
-        return predictor()
-    return predictor
+    return predictor() if inspect.isclass(predictor) else predictor
 
 
 # Base class for inputs, constructed dynamically in get_input_type().
@@ -210,23 +208,24 @@ class BaseInput(BaseModel):
 
 
 def get_predict(predictor: Any) -> Callable:
-    if hasattr(predictor, "predict"):
-        return predictor.predict
-    return predictor
+    return predictor.predict if hasattr(predictor, "predict") else predictor
 
 def validate_input_type(type: Type, name: str) -> None:
     if type is inspect.Signature.empty:
-            raise TypeError(
-                f"No input type provided for parameter `{name}`. Supported input types are: {readable_types_list(ALLOWED_INPUT_TYPES)}, or a Union or List of those types."
-            )
+        raise TypeError(
+            f"No input type provided for parameter `{name}`. Supported input types are: {readable_types_list(ALLOWED_INPUT_TYPES)}, or a Union or List of those types."
+        )
     elif type not in ALLOWED_INPUT_TYPES:
-        if hasattr(type, "__origin__") and (type.__origin__ is Union or type.__origin__ is list):
-            for t in get_args(type):
-                validate_input_type(t, name)
-        else:
+        if (
+            not hasattr(type, "__origin__")
+            or type.__origin__ is not Union
+            and type.__origin__ is not list
+        ):
             raise TypeError(
                 f"Unsupported input type {human_readable_type_name(type)} for parameter `{name}`. Supported input types are: {readable_types_list(ALLOWED_INPUT_TYPES)}, or a Union or List of those types."
             )
+        for t in get_args(type):
+            validate_input_type(t, name)
 
 def get_input_type(predictor: BasePredictor) -> Type[BaseInput]:
     """
@@ -246,9 +245,7 @@ def get_input_type(predictor: BasePredictor) -> Type[BaseInput]:
     signature = inspect.signature(predict)
     create_model_kwargs = {}
 
-    order = 0
-
-    for name, parameter in signature.parameters.items():
+    for order, (name, parameter) in enumerate(signature.parameters.items()):
         InputType = parameter.annotation
 
         validate_input_type(InputType, name)
@@ -265,8 +262,6 @@ def get_input_type(predictor: BasePredictor) -> Type[BaseInput]:
         # Fields aren't ordered, so use this pattern to ensure defined order
         # https://github.com/go-openapi/spec/pull/116
         default.extra["x-order"] = order
-        order += 1
-
         # Choices!
         if default.extra.get("choices"):
             choices = default.extra["choices"]
@@ -352,7 +347,7 @@ def human_readable_type_name(t: Type) -> str:
         module = "cog"
 
     try:
-        return module + "." + t.__qualname__
+        return f"{module}.{t.__qualname__}"
     except AttributeError:
         return str(t)
 

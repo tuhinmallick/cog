@@ -75,7 +75,7 @@ class StreamRedirector(threading.Thread):
         self.drain_event = threading.Event()
         self.terminate_token = uuid.uuid4().hex
 
-        if len(self._streams) == 0:
+        if not self._streams:
             raise ValueError("provide at least one wrapped stream to redirect")
 
         # Setting daemon=True ensures that threading._shutdown will not wait

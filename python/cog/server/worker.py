@@ -125,7 +125,7 @@ class Worker:
 
         if done:
             if done.error and raise_on_error:
-                raise FatalWorkerException(raise_on_error + ": " + done.error_detail)
+                raise FatalWorkerException(f"{raise_on_error}: {done.error_detail}")
             self._state = WorkerState.READY
             self._allow_cancel = False
 
@@ -214,9 +214,7 @@ class _ChildWorker(_spawn.Process):  # type: ignore
         self._cancelable = True
         try:
             predict = get_predict(self._predictor)
-            result = predict(**payload)
-
-            if result:
+            if result := predict(**payload):
                 if inspect.isasyncgen(result):
                     self._events.send(PredictionOutputType(multi=True))
                     async for r in result:

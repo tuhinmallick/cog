@@ -58,17 +58,11 @@ def put_file_to_signed_endpoint(
     )
     resp.raise_for_status()
 
-    # strip any signing gubbins from the URL
-    final_url = urlparse(resp.url)._replace(query="").geturl()
-
-    return final_url
+    return urlparse(resp.url)._replace(query="").geturl()
 
 
 def ensure_trailing_slash(url: str) -> str:
     """
     Adds a trailing slash to `url` if not already present, and then returns it.
     """
-    if url.endswith("/"):
-        return url
-    else:
-        return url + "/"
+    return url if url.endswith("/") else f"{url}/"
