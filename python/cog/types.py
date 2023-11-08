@@ -57,7 +57,7 @@ class File(io.IOBase):
         if parsed_url.scheme == "data":
             res = urllib.request.urlopen(value)  # noqa: S310
             return io.BytesIO(res.read())
-        elif parsed_url.scheme == "http" or parsed_url.scheme == "https":
+        elif parsed_url.scheme in ["http", "https"]:
             return URLFile(value)
         else:
             raise ValueError(
@@ -164,7 +164,7 @@ class URLFile(io.IOBase):
             setattr(self.__wrapped__, name, value)
 
     def __getattr__(self, name: str) -> Any:
-        if name in ("__target__", "__wrapped__", "__url__"):
+        if name in {"__target__", "__wrapped__", "__url__"}:
             raise AttributeError(name)
         else:
             return getattr(self.__wrapped__, name)
@@ -213,10 +213,7 @@ def get_filename(url: str) -> str:
         resp = urllib.request.urlopen(url)  # noqa: S310
         mime_type = resp.headers.get_content_type()
         extension = mimetypes.guess_extension(mime_type)
-        if extension is None:
-            return "file"
-        return "file" + extension
-
+        return "file" if extension is None else f"file{extension}"
     basename = os.path.basename(parsed_url.path)
     basename = urllib.parse.unquote_plus(basename)
 

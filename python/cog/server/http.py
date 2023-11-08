@@ -361,11 +361,7 @@ if __name__ == "__main__":
 
     threads = args.threads
     if threads is None:
-        if config.get("build", {}).get("gpu", False):
-            threads = 1
-        else:
-            threads = os.cpu_count()
-
+        threads = 1 if config.get("build", {}).get("gpu", False) else os.cpu_count()
     shutdown_event = threading.Event()
     app = create_app(
         config=config,

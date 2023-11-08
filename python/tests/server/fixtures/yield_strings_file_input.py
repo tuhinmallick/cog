@@ -9,4 +9,4 @@ class Predictor(BasePredictor):
             prefix = f.read()
         predictions = ["foo", "bar", "baz"]
         for prediction in predictions:
-            yield prefix + " " + prediction
+            yield f"{prefix} {prediction}"

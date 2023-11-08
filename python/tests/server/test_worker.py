@@ -149,7 +149,7 @@ def _process(events, swallow_exceptions=False):
 
 def _fixture_path(name):
     test_dir = os.path.dirname(os.path.realpath(__file__))
-    return os.path.join(test_dir, f"fixtures/{name}.py") + ":Predictor"
+    return f'{os.path.join(test_dir, f"fixtures/{name}.py")}:Predictor'
 
 
 @pytest.mark.parametrize("name,payloads", SETUP_FATAL_FIXTURES)
@@ -362,7 +362,7 @@ def test_cancel_multiple_predictions():
                     dones.append(event)
 
         assert len(dones) == 5
-        assert all([d == Done(canceled=True) for d in dones])
+        assert all(d == Done(canceled=True) for d in dones)
     finally:
         w.terminate()
 
@@ -526,8 +526,7 @@ class WorkerState(RuleBasedStateMachine):
         result = _process(self.predict_events)
 
         expected_stdout = ["START\n"]
-        for i in range(payload["steps"]):
-            expected_stdout.append(f"STEP {i+1}\n")
+        expected_stdout.extend(f"STEP {i + 1}\n" for i in range(payload["steps"]))
         expected_stdout.append("END\n")
 
         assert result.stdout == "".join(expected_stdout)

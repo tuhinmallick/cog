@@ -56,6 +56,4 @@ def upload_files(obj: Any, upload_file: Callable[[io.IOBase], str]) -> Any:
     if isinstance(obj, Path):
         with obj.open("rb") as f:
             return upload_file(f)
-    if isinstance(obj, io.IOBase):
-        return upload_file(obj)
-    return obj
+    return upload_file(obj) if isinstance(obj, io.IOBase) else obj

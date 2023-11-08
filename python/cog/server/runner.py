@@ -174,11 +174,9 @@ def create_event_handler(
     if upload_url is not None:
         file_uploader = generate_file_uploader(upload_url)
 
-    event_handler = PredictionEventHandler(
+    return PredictionEventHandler(
         response, webhook_sender=webhook_sender, file_uploader=file_uploader
     )
-
-    return event_handler
 
 
 def generate_file_uploader(upload_url: str) -> Callable:

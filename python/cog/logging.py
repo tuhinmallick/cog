@@ -42,13 +42,9 @@ def setup_logging(*, log_level: int = logging.NOTSET) -> None:
         # Rendering of `exc_info` is handled by ConsoleRenderer.
         processors.append(structlog.dev.set_exc_info)
     else:
-        # Outside of development mode `exc_info` must be set explicitly when
-        # needed, and is translated into a formatted `exception` field.
-        processors.append(structlog.processors.format_exc_info)
-        # Set `severity`, not `level`, for compatibility with Google
-        # Stackdriver logging expectations.
-        processors.append(replace_level_with_severity)
-
+        processors.extend(
+            (structlog.processors.format_exc_info, replace_level_with_severity)
+        )
     # Stackdriver logging expects a "message" field, not "event"
     processors.append(structlog.processors.EventRenamer("message"))
 

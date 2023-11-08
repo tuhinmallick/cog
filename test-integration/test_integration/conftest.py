@@ -12,6 +12,6 @@ def pytest_sessionstart(session):
 
 @pytest.fixture
 def docker_image():
-    image = "cog-test-" + random_string(10)
+    image = f"cog-test-{random_string(10)}"
     yield image
     subprocess.run(["docker", "rmi", "-f", image], check=False)

@@ -5,6 +5,4 @@ from cog import BasePredictor
 
 class Predictor(BasePredictor):
     def predict(self) -> Iterator[str]:
-        predictions = ["foo", "bar", "baz"]
-        for prediction in predictions:
-            yield prediction
+        yield from ["foo", "bar", "baz"]

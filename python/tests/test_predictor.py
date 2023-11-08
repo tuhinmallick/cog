@@ -41,4 +41,4 @@ def test_load_predictor_from_ref_overrides_argv():
 
 def _fixture_path(name):
     test_dir = os.path.dirname(os.path.realpath(__file__))
-    return os.path.join(test_dir, f"fixtures/{name}.py") + ":Predictor"
+    return f'{os.path.join(test_dir, f"fixtures/{name}.py")}:Predictor'
